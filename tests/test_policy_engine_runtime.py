@@ -6,8 +6,8 @@ def test_hr_scope_is_redirected():
     pep = PolicyEnforcementPoint(pdp, audit_log_path="logs/test-policy-audit.jsonl")
 
     result = pep.enforce(
-        query="Can you explain EuroHealth salary bands?",
-        response="Salary bands are confidential.",
+        query="Can you explain EuroHealth parental leave policy?",
+        response="Please use the official HR support channel for this topic.",
         confidence=0.9,
     )
 
