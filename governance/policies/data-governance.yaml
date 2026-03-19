@@ -1,0 +1,28 @@
+version: 1
+policy_set: data_governance
+owner_role: AI-SEC
+reviewers: [AI-DS, AI-PM]
+scope:
+  allowed_domains: [it_helpdesk]
+  disallowed_domains: [hr, claims, finance]
+data_rules:
+  training_data:
+    allow_employee_pii: false
+    allow_customer_sensitive_data: false
+    note: >
+      Phase 1 prohibits training or fine-tuning on employee PII. Use redacted data
+      and/or synthetic data for evaluation and testing.
+  evaluation_data:
+    required_languages: [EN, DE, CZ]
+    required_provenance_fields:
+      - eval_pack_id
+      - source_system
+      - extraction_date
+      - redaction_method_version
+      - approver
+    retention:
+      eval_artifacts_days: 1095   # 3 years
+  kb_sources:
+    allowed_sources: [confluence_kb, approved_policies_repo]
+    require_owner_field: true
+    require_last_updated_field: true

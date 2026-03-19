@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EuroHealth Helpdesk Agent Demo</title>
+  <style>
+    :root {
+      --bg: #f3efe5;
+      --panel: #fffdf8;
+      --ink: #1f2b2d;
+      --muted: #5d6a6d;
+      --accent: #0e7c66;
+      --line: #d7d1c4;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top right, rgba(14, 124, 102, 0.12), transparent 30%),
+        linear-gradient(180deg, #f9f6ef 0%, var(--bg) 100%);
+      color: var(--ink);
+    }
+    main {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 24px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(38, 46, 48, 0.08);
+    }
+    h1 { margin-top: 0; font-size: 2.2rem; }
+    p { color: var(--muted); line-height: 1.5; }
+    textarea {
+      width: 100%; min-height: 140px; border-radius: 12px; border: 1px solid var(--line);
+      padding: 14px; font: inherit; box-sizing: border-box; background: #fff;
+    }
+    button {
+      margin-top: 14px; border: 0; border-radius: 999px; background: var(--accent);
+      color: white; padding: 12px 20px; font: inherit; cursor: pointer;
+    }
+    pre {
+      margin-top: 18px; padding: 16px; border-radius: 12px; background: #172022;
+      color: #edf4f0; overflow: auto; white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="panel">
+      <h1>EuroHealth Helpdesk Agent</h1>
+      <p>This is a portfolio demo page for the FastAPI agent. Ask an IT helpdesk question and the app will call the local <code>/chat</code> endpoint.</p>
+      <textarea id="question">How do I access VPN at EuroHealth?</textarea>
+      <button id="submit">Ask Agent</button>
+      <pre id="output">Waiting for request...</pre>
+    </div>
+  </main>
+  <script>
+    const button = document.getElementById("submit");
+    const question = document.getElementById("question");
+    const output = document.getElementById("output");
+    button.addEventListener("click", async () => {
+      output.textContent = "Calling local agent...";
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: question.value, language: "EN" })
+        });
+        const data = await response.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        output.textContent = "Request failed: " + error;
+      }
+    });
+  </script>
+</body>
+</html>

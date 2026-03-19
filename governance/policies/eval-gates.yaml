@@ -1,0 +1,51 @@
+version: 1
+policy_set: evaluation_gates
+owner_role: AI-DS
+reviewers: [AI-SEC, AI-SE, AI-PM]
+applies_to:
+  change_triggers:
+    - model_version_change
+    - prompt_template_change
+    - retrieval_config_change
+    - policy_yaml_change
+gates:
+  - gate_id: MISROUTE_RATE
+    metric: misroute_rate
+    scope: overall
+    threshold:
+      operator: "<="
+      value: 0.05
+    enforcement:
+      on_fail: BLOCK_DEPLOY
+      on_warn: STAGING_ONLY
+      warn_if_value_greater_than: 0.04
+  - gate_id: MULTILINGUAL_VARIANCE
+    metric: accuracy_variance_across_languages
+    languages: [EN, DE, CZ]
+    threshold:
+      operator: "<="
+      value: 0.04   # 4 percentage points
+    enforcement:
+      on_fail: BLOCK_DEPLOY
+      on_warn: STAGING_ONLY
+      warn_if_value_greater_than: 0.03
+  - gate_id: DRIFT
+    metric: accuracy_drop_vs_last_approved
+    threshold:
+      operator: "<="
+      value: 0.03   # 3 percentage points drop allowed
+    enforcement:
+      on_fail: BLOCK_DEPLOY
+  - gate_id: PII_LEAKAGE
+    metric: pii_leakage_rate
+    threshold:
+      operator: "=="
+      value: 0.0
+    enforcement:
+      on_fail: BLOCK_DEPLOY
+logging:
+  required_eval_artifacts:
+    - eval_pack_id
+    - release_id
+    - metrics_json
+    - per_language_breakdown

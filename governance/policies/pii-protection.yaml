@@ -1,0 +1,33 @@
+version: 1
+policy_set: pii_protection
+owner_role: AI-SEC
+reviewers: [AI-DS]
+rules:
+  - rule_id: PII_PROTECTION_BLOCK
+    if:
+      response_contains:
+        pii_categories:
+          - person_name
+          - email
+          - phone
+          - national_id
+          - address
+          - salary
+    then:
+      action: BLOCK
+      user_message: "I can’t share personal data. Please contact HR or follow the approved process."
+    and:
+      log:
+        level: ERROR
+        fields: [decision_id, user_role, language, model_version, rule_id]
+  - rule_id: PII_IN_PROMPT_ESCALATE
+    if:
+      user_input_contains:
+        pii_categories: [national_id, medical_info, salary]
+    then:
+      action: ESCALATE
+      reason: "Sensitive PII detected in user input"
+    and:
+      log:
+        level: WARN
+        fields: [decision_id, rule_id, language]

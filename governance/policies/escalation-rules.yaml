@@ -1,0 +1,33 @@
+policy:
+  name: escalation-rules
+  version: "1.0"
+  description: Escalation triggers for human handoff
+  owner: AI-SEC
+  last_reviewed: "2026-02-25"
+  rules:
+    - id: low-confidence-escalate
+      description: Escalate when agent confidence is below threshold
+      if: agent.confidence < 0.7
+      then: escalate
+      respond: "I'm not confident in my answer. Let me connect you with a human agent."
+      log: "Low confidence escalation"
+      escalate_to: human_agent
+      priority: normal
+
+    - id: repeated-failure-escalate
+      description: Escalate after 2 failed resolution attempts
+      if: session.failed_attempts >= 2
+      then: escalate
+      respond: "Let me connect you with a specialist who can help resolve this."
+      log: "Repeated failure escalation"
+      escalate_to: l2_support
+      priority: high
+
+    - id: explicit-human-request
+      description: Honor user request for human agent
+      if: query.contains(human, agent, person, speak_to_someone)
+      then: escalate
+      respond: "Connecting you with a human agent now."
+      log: "User-requested escalation"
+      escalate_to: human_agent
+      priority: immediate

@@ -1,0 +1,35 @@
+version: 1
+schema_name: eurohealth_audit_event
+owner_role: AI-SE
+required_fields:
+  - decision_id
+  - timestamp_utc
+  - ticket_id
+  - language
+  - user_role
+  - model_family
+  - model_version
+  - prompt_template_id
+  - retrieved_doc_ids
+  - kb_version
+  - policy_decision
+  - rule_ids_triggered
+  - action_taken
+  - human_override_flag
+optional_fields:
+  - retrieval_scores
+  - latency_ms
+  - outcome_label
+  - evaluator_pack_id
+storage:
+  on_prem_log_store: true
+  retention_days: 1095
+integrity:
+  include_audit_signature: true
+  signature_fields:
+    - decision_id
+    - timestamp_utc
+    - model_version
+    - retrieved_doc_ids
+    - policy_decision
+    - action_taken

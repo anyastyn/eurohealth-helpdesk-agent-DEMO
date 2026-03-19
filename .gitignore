@@ -1,0 +1,8 @@
+.env
+__pycache__/
+.pytest_cache/
+logs/
+data/kb_index.json
+data/kb_quality_report.json
+audit.log
+.DS_Store

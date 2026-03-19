@@ -1,0 +1,38 @@
+version: 1
+policy_set: kb_freshness
+owner_role: AI-DS
+reviewers: [FDE, AI-SEC]
+freshness_rules:
+  - rule_id: KB_DEPRECATED_BLOCK
+    if:
+      any_retrieved_doc:
+        status_in: [deprecated, superseded]
+    then:
+      action: ESCALATE
+      reason: "Retrieved deprecated/superseded KB content"
+    and:
+      log:
+        level: WARN
+        fields: [decision_id, retrieved_doc_ids, kb_version, rule_id]
+  - rule_id: KB_STALE_ESCALATE
+    if:
+      any_retrieved_doc:
+        last_updated_days_greater_than: 365
+    then:
+      action: ESCALATE
+      reason: "KB content older than 365 days"
+    and:
+      log:
+        level: INFO
+        fields: [decision_id, retrieved_doc_ids, last_updated, rule_id]
+  - rule_id: KB_NO_METADATA_ESCALATE
+    if:
+      any_retrieved_doc:
+        missing_fields: [owner, last_updated]
+    then:
+      action: ESCALATE
+      reason: "Missing KB ownership or freshness metadata"
+    and:
+      log:
+        level: WARN
+        fields: [decision_id, retrieved_doc_ids, rule_id]

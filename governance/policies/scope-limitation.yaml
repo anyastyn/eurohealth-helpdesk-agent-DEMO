@@ -1,0 +1,25 @@
+version: 1
+policy_set: scope_limitation
+owner_role: AI-PM
+reviewers: [AI-SEC, AI-DS]
+rules:
+  - rule_id: OUT_OF_SCOPE_REDIRECT
+    if:
+      user_intent_in: [hr, claims, finance]
+    then:
+      action: REDIRECT
+      user_message: "I can help with IT helpdesk topics only. For HR/Claims/Finance please use the official channel."
+    and:
+      log:
+        level: INFO
+        fields: [decision_id, user_intent, rule_id, language]
+  - rule_id: LOW_CONFIDENCE_ESCALATE
+    if:
+      model_confidence_less_than: 0.60
+    then:
+      action: ESCALATE
+      reason: "Low confidence response"
+    and:
+      log:
+        level: INFO
+        fields: [decision_id, confidence, model_version, rule_id]
